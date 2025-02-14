@@ -36,8 +36,9 @@ services: # 서비스 목록 정의
       timeout: 10s
       retries: 3
       start_period: 15s
-    command: # docker run 명렁어와 동일
-      - npm start
+    command: ["npm", "start"] # docker run 명령어와 동일
+                              # Dockerfile과 run이 겹친다면, Dockerfile의 Run 명령어를 무시함
+
 
   db:
     image: postgres # 컨테이너 이미지 지정
