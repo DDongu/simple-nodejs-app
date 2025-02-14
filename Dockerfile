@@ -9,7 +9,7 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 # 사용할 애플리케이션 코드 복사
-COPY server.js .
+COPY app.js .
 
 # 환경 변수 설정 (개별 설정은 docker-compose에서 수행)
 ENV NODE_ENV=production
