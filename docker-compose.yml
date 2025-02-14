@@ -1,0 +1,64 @@
+version: "3.8" # 버전 지정
+
+services: # 서비스 목록 정의
+  app:
+    build: # 이미지가 아니라 Dockerfile을 사용하므로 build를 사용
+      context: . # docker build를 실행할 디렉토리
+      dockerfile: ./Dockerfile # 사용될 Dockerfile 선택
+    container_name: my_node_app
+    volumes: # 로컬과 저장소 연결(로컬저장소:컨테이너저장소)
+      - ./:/usr/scr/app
+    ports: # 포트 설정(외부:컨테이너내부)
+      - "3000:3000"
+    environment: # 환경변수 설정
+      - NODE_ENV=development
+      ### 두 가지 방법이 있는데 표기 방식만 다름.(성능 동일)
+      # 1. 단일 URL 방식 (한 줄로 연결 정보 제공)
+      - DATABASE_URL=postgres://myuser:mypassword@db:5432/mydatabase # PostgreSQL 연결 URL
+      - REDIS_HOST=redis # Redis 컨테이너의 호스트명
+      - REDIS_PORT=6379 # Redis 포트
+
+      # 2. 개별 환경 변수 방식 (세부적인 연결 설정 가능)
+      # - DB_HOST=db # PostgreSQL 데이터베이스 호스트(서비스명 입력)
+      # - DB_PORT=5432 # PostgreSQL 포트
+      # - DB_NAME=mydatabase # 사용할 데이터베이스 이름
+      # - DB_USERNAME=myuser # 데이터베이스 사용자 이름
+      # - DB_PASSWORD=mypassword # 데이터베이스 비밀번호
+    depends_on: # 특정 서비스에 대한 의존도(지정된 서비스가 먼저 시작되도록)
+      - db
+
+    command: # docker run 명렁어와 동일
+      - npm rum local
+
+  db:
+    image: postgresql # 컨테이너 이미지 지정
+    container_name: my_postgres
+    restart: always # 컨테이너 다운 시 재시작하라는 명령어
+    ports: # 포트 설정
+      - "5432:5432"
+    environment: # 환경변수 설정
+      POSTGRES_USER: myuser # PostgreSQL 사용자 이름 설정
+      POSTGRES_PASSWORD: mypassword # PostgreSQL 비밀번호 설정
+      POSTGRES_DB: mydatabase # 기본 생성할 데이터베이스 이름 설정
+    volumes: # -v 옵션과 동일
+      - postgres-data:/var/lib/postgresql/data
+    networks: # ?????
+      - my_network
+
+  redis:
+    image: redis
+    container_name: my_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - my-network
+
+volumes: # 볼륨 정의 (이름만 명시하면 자동으로 생성됨)(호스트경로: /var/lib/docker/volumes/)
+  postgres-data:
+  redis-data:
+
+networks: # 네트워크 정의 (이름만 명시하면 자동으로 생성됨. 같은 네트워크에 속한 컨테이너끼리 서비스명으로 접근 가능하게 됨)
+  my_network:
