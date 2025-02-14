@@ -11,6 +11,8 @@ services: # 서비스 목록 정의
       - ./:/usr/scr/app
     ports: # 포트 설정(외부:컨테이너내부)
       - "3000:3000"
+    networks: # 네트워크 설정
+      - my-network
     environment: # 환경변수 설정
       - NODE_ENV=development
       ### 두 가지 방법이 있는데 표기 방식만 다름.(성능 동일)
@@ -36,9 +38,9 @@ services: # 서비스 목록 정의
       timeout: 10s
       retries: 3
       start_period: 15s
-    command: ["npm", "start"] # docker run 명령어와 동일
-                              # Dockerfile과 run이 겹친다면, Dockerfile의 Run 명령어를 무시함
-
+    command:
+      ["npm", "start"] # docker run 명령어와 동일
+      # Dockerfile과 run이 겹친다면, Dockerfile의 Run 명령어를 무시함
 
   db:
     image: postgres # 컨테이너 이미지 지정
@@ -52,7 +54,7 @@ services: # 서비스 목록 정의
       POSTGRES_DB: mydatabase # 기본 생성할 데이터베이스 이름 설정
     volumes: # -v 옵션과 동일
       - postgres-data:/var/lib/postgresql/data
-    networks: # ?????
+    networks: # 네트워크 설정
       - my-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U myuser -d mydatabase"]
