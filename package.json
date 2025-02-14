@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "local": "node server.js"
+    "start": "node app.js",
+    "local": "node app.js"
   },
   "keywords": [],
   "author": "",
