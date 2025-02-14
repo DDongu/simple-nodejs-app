@@ -37,7 +37,7 @@ services: # 서비스 목록 정의
       retries: 3
       start_period: 15s
     command: # docker run 명렁어와 동일
-      - npm rum local
+      - npm run local
 
   db:
     image: postgres # 컨테이너 이미지 지정
