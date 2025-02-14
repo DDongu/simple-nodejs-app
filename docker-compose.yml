@@ -1,4 +1,4 @@
-version: "3.8" # 버전 지정
+version: "3.8" # Docker Compose의 파일 포맷 버전 지정
 
 services: # 서비스 목록 정의
   app:
@@ -79,9 +79,9 @@ services: # 서비스 목록 정의
       timeout: 10s
       retries: 3
 
-volumes: # 볼륨 정의 (이름만 명시하면 자동으로 생성됨)(호스트경로: /var/lib/docker/volumes/)
+volumes: # 서비스에서 사용할 볼륨 정의 (호스트경로: /var/lib/docker/volumes/)
   postgres-data:
   redis-data:
 
-networks: # 네트워크 정의 (이름만 명시하면 자동으로 생성됨. 같은 네트워크에 속한 컨테이너끼리 서비스명으로 접근 가능하게 됨)
+networks: # 서비스에서 사용할 네트워크 정의 (같은 네트워크에 속한 컨테이너끼리는 서비스명으로 접근 가능하게 됨)
   my-network:
