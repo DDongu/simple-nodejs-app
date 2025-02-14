@@ -6,6 +6,7 @@ services: # 서비스 목록 정의
       context: . # docker build를 실행할 디렉토리
       dockerfile: ./Dockerfile # 사용될 Dockerfile 선택
     container_name: my_node_app
+    restart: always # 컨테이너 다운 시 재시작하라는 명령어
     volumes: # 로컬과 저장소 연결(로컬저장소:컨테이너저장소)
       - ./:/usr/scr/app
     ports: # 포트 설정(외부:컨테이너내부)
@@ -25,13 +26,21 @@ services: # 서비스 목록 정의
       # - DB_USERNAME=myuser # 데이터베이스 사용자 이름
       # - DB_PASSWORD=mypassword # 데이터베이스 비밀번호
     depends_on: # 특정 서비스에 대한 의존도(지정된 서비스가 먼저 시작되도록)
-      - db
-
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     command: # docker run 명렁어와 동일
       - npm rum local
 
   db:
-    image: postgresql # 컨테이너 이미지 지정
+    image: postgres # 컨테이너 이미지 지정
     container_name: my_postgres
     restart: always # 컨테이너 다운 시 재시작하라는 명령어
     ports: # 포트 설정
@@ -43,7 +52,12 @@ services: # 서비스 목록 정의
     volumes: # -v 옵션과 동일
       - postgres-data:/var/lib/postgresql/data
     networks: # ?????
-      - my_network
+      - my-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydatabase"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
 
   redis:
     image: redis
@@ -55,10 +69,15 @@ services: # 서비스 목록 정의
       - redis-data:/data
     networks:
       - my-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
 
 volumes: # 볼륨 정의 (이름만 명시하면 자동으로 생성됨)(호스트경로: /var/lib/docker/volumes/)
   postgres-data:
   redis-data:
 
 networks: # 네트워크 정의 (이름만 명시하면 자동으로 생성됨. 같은 네트워크에 속한 컨테이너끼리 서비스명으로 접근 가능하게 됨)
-  my_network:
+  my-network:
