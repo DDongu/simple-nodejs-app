@@ -54,6 +54,7 @@ services: # 서비스 목록 정의
       POSTGRES_DB: mydatabase # 기본 생성할 데이터베이스 이름 설정
     volumes: # -v 옵션과 동일
       - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # DB 초기화 SQL 실행
     networks: # 네트워크 설정
       - my-network
     healthcheck:

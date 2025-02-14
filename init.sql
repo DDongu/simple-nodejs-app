@@ -1,0 +1,6 @@
+-- DB가 생성된 후 실행될 초기 SQL 스크립트
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL
+);
